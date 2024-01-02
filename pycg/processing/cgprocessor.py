@@ -178,6 +178,9 @@ class CallGraphProcessor(ProcessingBase):
             #           self.call_graph.add_edge(self.current_ns, dec_name)
 
             if pointer_def.get_type() == utils.constants.CLS_DEF:
+                # Class def
+                self.call_graph.add_edge(self.current_method, pointer)
+
                 init_ns = self.find_cls_fun_ns(pointer, utils.constants.CLS_INIT)
 
                 for ns in init_ns:
