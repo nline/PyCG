@@ -35,9 +35,11 @@ from pycg.processing.preprocessor import PreProcessor
 
 
 class CallGraphGenerator(object):
-    def __init__(self, entry_points, package, max_iter, operation):
+    def __init__(self, entry_points, package, exclusives, ignored_mods, max_iter, operation):
         self.entry_points = entry_points
         self.package = package
+        self.exclusives = exclusives
+        self.ignored_mods = ignored_mods
         self.state = None
         self.max_iter = max_iter
         self.operation = operation
@@ -162,6 +164,8 @@ class CallGraphGenerator(object):
         self.do_pass(
             PreProcessor,
             True,
+            self.exclusives,
+            self.ignored_mods,
             self.import_manager,
             self.scope_manager,
             self.def_manager,
@@ -179,6 +183,8 @@ class CallGraphGenerator(object):
             self.do_pass(
                 PostProcessor,
                 False,
+                self.exclusives,
+                self.ignored_mods,
                 self.import_manager,
                 self.scope_manager,
                 self.def_manager,

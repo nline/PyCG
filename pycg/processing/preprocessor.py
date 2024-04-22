@@ -30,6 +30,8 @@ class PreProcessor(ProcessingBase):
         self,
         filename,
         modname,
+        exclusives,
+        ignored_mods,
         import_manager,
         scope_manager,
         def_manager,
@@ -40,6 +42,8 @@ class PreProcessor(ProcessingBase):
         super().__init__(filename, modname, modules_analyzed)
 
         self.modname = modname
+        self.exclusives = exclusives
+        self.ignored_mods = ignored_mods
         self.mod_dir = "/".join(self.filename.split("/")[:-1])
 
         self.import_manager = import_manager
@@ -71,6 +75,8 @@ class PreProcessor(ProcessingBase):
         super().analyze_submodule(
             PreProcessor,
             modname,
+            self.exclusives,
+            self.ignored_mods,
             self.import_manager,
             self.scope_manager,
             self.def_manager,
@@ -204,6 +210,14 @@ class PreProcessor(ProcessingBase):
             src_name = handle_src_name(import_item.name)
             tgt_name = import_item.asname if import_item.asname else import_item.name
             imported_name = self.import_manager.handle_import(src_name, level)
+            
+            # Limit to exclusive module            
+            if src_name.split(".")[0] not in self.exclusives:
+                continue
+
+            # Skip ignored modules            
+            if tgt_name in self.ignored_mods:
+                continue
 
             if not imported_name:
                 add_external_def(src_name, tgt_name)

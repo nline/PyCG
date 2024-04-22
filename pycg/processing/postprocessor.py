@@ -30,6 +30,8 @@ class PostProcessor(ProcessingBase):
         self,
         input_file,
         modname,
+        exclusives,
+        ignored_mods,
         import_manager,
         scope_manager,
         def_manager,
@@ -38,6 +40,8 @@ class PostProcessor(ProcessingBase):
         modules_analyzed=None,
     ):
         super().__init__(input_file, modname, modules_analyzed)
+        self.exclusives = exclusives
+        self.ignored_mods = ignored_mods
         self.import_manager = import_manager
         self.scope_manager = scope_manager
         self.def_manager = def_manager
@@ -329,6 +333,8 @@ class PostProcessor(ProcessingBase):
     def analyze_submodules(self):
         super().analyze_submodules(
             PostProcessor,
+            self.exclusives,
+            self.ignored_mods,
             self.import_manager,
             self.scope_manager,
             self.def_manager,
