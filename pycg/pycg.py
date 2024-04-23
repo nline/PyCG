@@ -35,7 +35,9 @@ from pycg.processing.preprocessor import PreProcessor
 
 
 class CallGraphGenerator(object):
-    def __init__(self, entry_points, package, exclusives, ignored_mods, max_iter, operation):
+    def __init__(
+        self, entry_points, package, exclusives, ignored_mods, max_iter, operation
+    ):
         self.entry_points = entry_points
         self.package = package
         self.exclusives = exclusives
