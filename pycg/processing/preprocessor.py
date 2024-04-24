@@ -91,7 +91,7 @@ class PreProcessor(ProcessingBase):
                 i for i in items if not \
                     any(ignored_mod in i for ignored_mod in self.ignored_mods)
             ]
-
+            print('items',items)
             for item in items:
                 defi = self.def_manager.get(item)
                 if not defi:
