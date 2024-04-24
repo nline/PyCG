@@ -207,33 +207,32 @@ class PreProcessor(ProcessingBase):
                 scope.add_def(target, tgt_defi)
 
         # Limit to exclusive module
-        if node.module not in self.exclusives:
-            return
-        
-        for import_item in node.names:
-            src_name = handle_src_name(import_item.name)
-            tgt_name = import_item.asname if import_item.asname else import_item.name
-            imported_name = self.import_manager.handle_import(src_name, level)
+        print()
+        if node.module in self.exclusives:
+            for import_item in node.names:
+                src_name = handle_src_name(import_item.name)
+                tgt_name = import_item.asname if import_item.asname else import_item.name
+                imported_name = self.import_manager.handle_import(src_name, level)
 
-            # Skip ignored modules
-            if tgt_name in self.ignored_mods:
-                continue
+                # Skip ignored modules
+                if tgt_name in self.ignored_mods:
+                    continue
 
-            if not imported_name:
-                add_external_def(src_name, tgt_name)
-                continue
+                if not imported_name:
+                    add_external_def(src_name, tgt_name)
+                    continue
 
-            fname = self.import_manager.get_filepath(imported_name)
-            if not fname:
-                add_external_def(src_name, tgt_name)
-                continue
-            # only analyze modules under the current directory
-            if self.import_manager.get_mod_dir() in fname:
-                if imported_name not in self.modules_analyzed:
-                    self.analyze_submodule(imported_name)
-                handle_scopes(import_item.name, tgt_name, imported_name)
-            else:
-                add_external_def(src_name, tgt_name)
+                fname = self.import_manager.get_filepath(imported_name)
+                if not fname:
+                    add_external_def(src_name, tgt_name)
+                    continue
+                # only analyze modules under the current directory
+                if self.import_manager.get_mod_dir() in fname:
+                    if imported_name not in self.modules_analyzed:
+                        self.analyze_submodule(imported_name)
+                    handle_scopes(import_item.name, tgt_name, imported_name)
+                else:
+                    add_external_def(src_name, tgt_name)
 
         # handle all modules that were not analyzed
         for modname in self.import_manager.get_imports(self.modname):
