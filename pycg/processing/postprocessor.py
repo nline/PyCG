@@ -187,7 +187,9 @@ class PostProcessor(ProcessingBase):
             cls = self.class_manager.create(cls_def.get_ns(), self.modname)
 
         cls.clear_mro()
+        print('base node', node)
         for base in node.bases:
+            print('base', base)
             # all bases are of the type ast.Name
             self.visit(base)
 
