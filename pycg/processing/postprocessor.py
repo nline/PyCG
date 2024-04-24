@@ -189,11 +189,11 @@ class PostProcessor(ProcessingBase):
         cls.clear_mro()
         print('base node', node)
         for base in node.bases:
-            print('base', base)
             # all bases are of the type ast.Name
             self.visit(base)
 
             bases = self.decode_node(base)
+            print('bases', bases)
             for base_def in bases:
                 if not isinstance(base_def, Definition):
                     continue
