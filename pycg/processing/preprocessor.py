@@ -237,8 +237,10 @@ class PreProcessor(ProcessingBase):
                 add_external_def(src_name, tgt_name)
 
         # handle all modules that were not analyzed
-        print('mod full', self.modname)
         for modname in self.import_manager.get_imports(self.modname):
+            if modname.split(".")[0] not in self.exclusives:
+                continue
+            
             print('mod', modname)
             fname = self.import_manager.get_filepath(modname)
 
