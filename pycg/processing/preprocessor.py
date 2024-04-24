@@ -206,7 +206,6 @@ class PreProcessor(ProcessingBase):
                 tgt_defi.get_name_pointer().add(defi.get_ns())
                 scope.add_def(target, tgt_defi)
 
-        print('node', node)
         for import_item in node.names:
             src_name = handle_src_name(import_item.name)
             tgt_name = import_item.asname if import_item.asname else import_item.name
@@ -240,8 +239,7 @@ class PreProcessor(ProcessingBase):
         for modname in self.import_manager.get_imports(self.modname):
             if modname.split(".")[0] not in self.exclusives:
                 continue
-            
-            print('mod', modname)
+
             fname = self.import_manager.get_filepath(modname)
 
             if not fname:
