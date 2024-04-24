@@ -115,7 +115,7 @@ class PreProcessor(ProcessingBase):
             )
             items = [
                 i for i in items if not \
-                    any(ignored_mod in i for ignored_mod in ignored_mods_set)
+                    any(ignored_mod in i for ignored_mod in self.ignored_mods)
             ]
             print('pre items', items)
 
