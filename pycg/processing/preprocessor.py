@@ -113,11 +113,11 @@ class PreProcessor(ProcessingBase):
             items = self.scope_manager.handle_module(
                 self.modname, self.filename, self.contents
             )
+            print('pre items', items)
             items = [
                 i for i in items if not \
                     any(ignored_mod in i for ignored_mod in self.ignored_mods)
             ]
-            print('pre items', items)
 
             root_sc = self.scope_manager.get_scope(self.modname)
             root_defi = self.def_manager.get(self.modname)
