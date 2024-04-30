@@ -87,14 +87,10 @@ class PreProcessor(ProcessingBase):
 
     def visit_Module(self, node):
         def iterate_mod_items(items, const):
-            print('iter items', [
+            print('bad iter items', [
                 i for i in items if \
                     any(ignored_mod in i for ignored_mod in self.ignored_mods)
             ])
-            items = [
-                i for i in items if not \
-                    any(ignored_mod in i for ignored_mod in self.ignored_mods)
-            ]
             for item in items:
                 defi = self.def_manager.get(item)
                 if not defi:
@@ -105,9 +101,12 @@ class PreProcessor(ProcessingBase):
                 parentns = ".".join(splitted[:-1])
                 self.scope_manager.get_scope(parentns).add_def(name, defi)
 
+        if "test_" in self.filename:
+            print('skip', self.filename)
+            return
+
         print('modname', self.modname, self.filename)
         self.import_manager.set_current_mod(self.modname, self.filename)
-        print('modname', self.modname, self.filename)
 
         mod = self.module_manager.create(self.modname, self.filename)
 
