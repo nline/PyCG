@@ -214,13 +214,15 @@ class PreProcessor(ProcessingBase):
                 tgt_defi.get_name_pointer().add(defi.get_ns())
                 scope.add_def(target, tgt_defi)
 
+        print(node.names, self.modname)
+
         for import_item in node.names:
             src_name = handle_src_name(import_item.name)
             tgt_name = import_item.asname if import_item.asname else import_item.name
             imported_name = self.import_manager.handle_import(src_name, level)
 
             # Limit to exclusive module if exclusives exist
-            if len(self.exclusives) > 0 and src_name.split(".")[0] not in self.exclusives:
+            if self.exclusives and src_name.split(".")[0] not in self.exclusives:
                 continue
 
             # Skip ignored modules
@@ -245,7 +247,7 @@ class PreProcessor(ProcessingBase):
 
         # handle all modules that were not analyzed
         for modname in self.import_manager.get_imports(self.modname):
-            if modname.split(".")[0] not in self.exclusives:
+            if self.exclusives and modname.split(".")[0] not in self.exclusives:
                 continue
 
             fname = self.import_manager.get_filepath(modname)
