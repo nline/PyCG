@@ -87,6 +87,10 @@ class PreProcessor(ProcessingBase):
 
     def visit_Module(self, node):
         def iterate_mod_items(items, const):
+            print('iter items', items = [
+                i for i in items if \
+                    any(ignored_mod in i for ignored_mod in self.ignored_mods)
+            ])
             items = [
                 i for i in items if not \
                     any(ignored_mod in i for ignored_mod in self.ignored_mods)
@@ -117,6 +121,7 @@ class PreProcessor(ProcessingBase):
             items = self.scope_manager.handle_module(
                 self.modname, self.filename, self.contents
             )
+            print('items', items)
 
             root_sc = self.scope_manager.get_scope(self.modname)
             root_defi = self.def_manager.get(self.modname)
