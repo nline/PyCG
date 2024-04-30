@@ -13,6 +13,10 @@ def main():
         "--package", help="Package containing the code to be analyzed", default=None
     )
     parser.add_argument(
+        "--exclusives", help="Exclusive package to analyze", default=[])
+    parser.add_argument(
+        "--ignored-mods", help="Modules to ignore during traversal", default=[])
+    parser.add_argument(
         "--fasten",
         help="Produce call graph using the FASTEN format",
         action="store_true",
@@ -57,7 +61,9 @@ def main():
     args = parser.parse_args()
 
     cg = CallGraphGenerator(
-        args.entry_point, args.package, args.max_iter, args.operation
+        args.entry_point, args.package,
+        args.exclusives, args.ignored_mods,
+        args.max_iter, args.operation
     )
     cg.analyze()
 
