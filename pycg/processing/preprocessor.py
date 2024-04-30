@@ -87,7 +87,7 @@ class PreProcessor(ProcessingBase):
 
     def visit_Module(self, node):
         def iterate_mod_items(items, const):
-            print('iter items', items = [
+            print('iter items', [
                 i for i in items if \
                     any(ignored_mod in i for ignored_mod in self.ignored_mods)
             ])
