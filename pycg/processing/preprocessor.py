@@ -105,7 +105,9 @@ class PreProcessor(ProcessingBase):
                 parentns = ".".join(splitted[:-1])
                 self.scope_manager.get_scope(parentns).add_def(name, defi)
 
+        print('modname', self.modname, self.filename)
         self.import_manager.set_current_mod(self.modname, self.filename)
+        print('modname', self.modname, self.filename)
 
         mod = self.module_manager.create(self.modname, self.filename)
 
