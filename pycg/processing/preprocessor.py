@@ -219,8 +219,8 @@ class PreProcessor(ProcessingBase):
             tgt_name = import_item.asname if import_item.asname else import_item.name
             imported_name = self.import_manager.handle_import(src_name, level)
 
-            # Limit to exclusive module
-            if src_name.split(".")[0] not in self.exclusives:
+            # Limit to exclusive module if exclusives exist
+            if len(self.exclusives) > 0 and src_name.split(".")[0] not in self.exclusives:
                 continue
 
             # Skip ignored modules
