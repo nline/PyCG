@@ -139,12 +139,6 @@ class CallGraphGenerator(object):
             if not input_mod:
                 continue
 
-            print(input_pkg, input_file)
-
-            if "test_" in input_file:
-                print('skip!')
-                continue
-
             if not input_pkg:
                 input_pkg = os.path.dirname(input_file)
             if input_mod not in modules_analyzed:
