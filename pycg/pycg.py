@@ -141,7 +141,7 @@ class CallGraphGenerator(object):
 
             if not input_pkg:
                 input_pkg = os.path.dirname(input_file)
-
+            print(input_pkg)
             if input_mod not in modules_analyzed:
                 if install_hooks:
                     self.import_manager.set_pkg(input_pkg)
