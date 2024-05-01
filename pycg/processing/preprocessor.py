@@ -19,6 +19,7 @@
 # under the License.
 #
 import ast
+import re
 
 from pycg import utils
 from pycg.machinery.definitions import Definition
@@ -30,6 +31,8 @@ class PreProcessor(ProcessingBase):
         self,
         filename,
         modname,
+        exclusives,
+        skip_classes,
         import_manager,
         scope_manager,
         def_manager,
@@ -40,6 +43,8 @@ class PreProcessor(ProcessingBase):
         super().__init__(filename, modname, modules_analyzed)
 
         self.modname = modname
+        self.exclusives = exclusives
+        self.skip_classes = skip_classes
         self.mod_dir = "/".join(self.filename.split("/")[:-1])
 
         self.import_manager = import_manager
@@ -47,6 +52,8 @@ class PreProcessor(ProcessingBase):
         self.def_manager = def_manager
         self.class_manager = class_manager
         self.module_manager = module_manager
+
+        self.skip_classes_pattern = re.compile('|'.join(map(re.escape, self.skip_classes)))
 
     def _get_fun_defaults(self, node):
         defaults = {}
@@ -71,6 +78,8 @@ class PreProcessor(ProcessingBase):
         super().analyze_submodule(
             PreProcessor,
             modname,
+            self.exclusives,
+            self.skip_classes,
             self.import_manager,
             self.scope_manager,
             self.def_manager,
@@ -81,6 +90,11 @@ class PreProcessor(ProcessingBase):
 
     def visit_Module(self, node):
         def iterate_mod_items(items, const):
+            items = [
+                item for item in items 
+                if not self.skip_classes_pattern.search(item)
+            ]
+            
             for item in items:
                 defi = self.def_manager.get(item)
                 if not defi:
@@ -203,6 +217,15 @@ class PreProcessor(ProcessingBase):
         for import_item in node.names:
             src_name = handle_src_name(import_item.name)
             tgt_name = import_item.asname if import_item.asname else import_item.name
+            
+            # Limit to exclusive module if exclusives exist
+            if self.exclusives and src_name.split(".")[0] not in self.exclusives:
+                continue
+
+            # Skip specified classes
+            if tgt_name in self.skip_classes:
+                continue
+
             imported_name = self.import_manager.handle_import(src_name, level)
 
             if not imported_name:
@@ -223,6 +246,9 @@ class PreProcessor(ProcessingBase):
 
         # handle all modules that were not analyzed
         for modname in self.import_manager.get_imports(self.modname):
+            if self.exclusives and modname.split(".")[0] not in self.exclusives:
+                continue
+
             fname = self.import_manager.get_filepath(modname)
 
             if not fname:
@@ -402,6 +428,9 @@ class PreProcessor(ProcessingBase):
 
     def visit_ClassDef(self, node):
         # create a definition for the class (node.name)
+        if node.name in self.skip_classes:
+            return
+
         cls_def = self.def_manager.handle_class_def(self.current_ns, node.name)
 
         mod = self.module_manager.get(self.modname)
