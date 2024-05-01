@@ -19,6 +19,7 @@
 # under the License.
 #
 import ast
+import re
 
 from pycg import utils
 from pycg.machinery.definitions import Definition
@@ -51,6 +52,8 @@ class PreProcessor(ProcessingBase):
         self.def_manager = def_manager
         self.class_manager = class_manager
         self.module_manager = module_manager
+
+        self.ignored_mod_pattern = re.compile('|'.join(map(re.escape, self.ignored_mods)))
 
     def _get_fun_defaults(self, node):
         defaults = {}
@@ -88,8 +91,8 @@ class PreProcessor(ProcessingBase):
     def visit_Module(self, node):
         def iterate_mod_items(items, const):
             items = [
-                i for i in items if \
-                    not any(ignored_mod in i for ignored_mod in self.ignored_mods)
+                item for item in items 
+                if not self.ignored_mod_pattern.search(item)
             ]
             
             for item in items:
@@ -224,6 +227,8 @@ class PreProcessor(ProcessingBase):
             if tgt_name in self.ignored_mods:
                 continue
 
+            print(tgt_name)
+
             if not imported_name:
                 add_external_def(src_name, tgt_name)
                 continue
@@ -244,6 +249,8 @@ class PreProcessor(ProcessingBase):
         for modname in self.import_manager.get_imports(self.modname):
             if self.exclusives and modname.split(".")[0] not in self.exclusives:
                 continue
+
+            print(modname)
 
             fname = self.import_manager.get_filepath(modname)
 
