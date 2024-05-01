@@ -15,7 +15,7 @@ def main():
     parser.add_argument(
         "--exclusives", help="Exclusive package to analyze", default=[])
     parser.add_argument(
-        "--ignored-mods", help="Modules to ignore during traversal", default=[])
+        "--skip-classes", help="Classes to skip during traversal", default=[])
     parser.add_argument(
         "--fasten",
         help="Produce call graph using the FASTEN format",
