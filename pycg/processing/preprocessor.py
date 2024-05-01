@@ -433,6 +433,11 @@ class PreProcessor(ProcessingBase):
 
     def visit_ClassDef(self, node):
         # create a definition for the class (node.name)
+        print('pre class', node.name)
+        if node.name in self.ignored_mods:
+            print('skip')
+            return
+
         cls_def = self.def_manager.handle_class_def(self.current_ns, node.name)
 
         mod = self.module_manager.get(self.modname)

@@ -178,6 +178,10 @@ class PostProcessor(ProcessingBase):
         super().visit_FunctionDef(node)
 
     def visit_ClassDef(self, node):
+        print('post visit', node.name)
+        if node.name in self.ignored_mods:
+            print('skip')
+            return
         # create a definition for the class (node.name)
         cls_def = self.def_manager.handle_class_def(self.current_ns, node.name)
 
@@ -185,7 +189,6 @@ class PostProcessor(ProcessingBase):
         cls = self.class_manager.get(cls_def.get_ns())
         if not cls:
             cls = self.class_manager.create(cls_def.get_ns(), self.modname)
-        print(cls_def, node.name, node.bases)
         cls.clear_mro()
         for base in node.bases:
             # all bases are of the type ast.Name
