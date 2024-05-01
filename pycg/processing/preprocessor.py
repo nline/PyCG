@@ -109,8 +109,6 @@ class PreProcessor(ProcessingBase):
 
         mod = self.module_manager.create(self.modname, self.filename)
 
-        print('visit_mod', self.modname,self.filename)
-
         first = 1
         last = len(self.contents.splitlines())
         if last == 0:
@@ -226,7 +224,6 @@ class PreProcessor(ProcessingBase):
 
             # Skip ignored modules
             if tgt_name in self.ignored_mods:
-                print('skip',tgt_name)
                 continue
 
             imported_name = self.import_manager.handle_import(src_name, level)
@@ -251,8 +248,6 @@ class PreProcessor(ProcessingBase):
         for modname in self.import_manager.get_imports(self.modname):
             if self.exclusives and modname.split(".")[0] not in self.exclusives:
                 continue
-
-            print(modname)
 
             fname = self.import_manager.get_filepath(modname)
 
@@ -433,9 +428,7 @@ class PreProcessor(ProcessingBase):
 
     def visit_ClassDef(self, node):
         # create a definition for the class (node.name)
-        print('pre class', node.name)
         if node.name in self.ignored_mods:
-            print('skip')
             return
 
         cls_def = self.def_manager.handle_class_def(self.current_ns, node.name)
