@@ -223,7 +223,10 @@ class PreProcessor(ProcessingBase):
             if self.exclusives and src_name.split(".")[0] not in self.exclusives:
                 continue
 
-            print('target',tgt_name)
+            # Skip ignored modules
+            if tgt_name in self.ignored_mods:
+                print('skip',tgt_name)
+                continue
 
             if not imported_name:
                 add_external_def(src_name, tgt_name)
@@ -245,6 +248,8 @@ class PreProcessor(ProcessingBase):
         for modname in self.import_manager.get_imports(self.modname):
             if self.exclusives and modname.split(".")[0] not in self.exclusives:
                 continue
+
+            print(modname)
 
             fname = self.import_manager.get_filepath(modname)
 
