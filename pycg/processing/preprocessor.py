@@ -32,7 +32,7 @@ class PreProcessor(ProcessingBase):
         filename,
         modname,
         exclusives,
-        ignored_mods,
+        skip_classes,
         import_manager,
         scope_manager,
         def_manager,
@@ -44,7 +44,7 @@ class PreProcessor(ProcessingBase):
 
         self.modname = modname
         self.exclusives = exclusives
-        self.ignored_mods = ignored_mods
+        self.skip_classes = skip_classes
         self.mod_dir = "/".join(self.filename.split("/")[:-1])
 
         self.import_manager = import_manager
@@ -53,7 +53,7 @@ class PreProcessor(ProcessingBase):
         self.class_manager = class_manager
         self.module_manager = module_manager
 
-        self.ignored_mod_pattern = re.compile('|'.join(map(re.escape, self.ignored_mods)))
+        self.skip_classes_pattern = re.compile('|'.join(map(re.escape, self.skip_classes)))
 
     def _get_fun_defaults(self, node):
         defaults = {}
@@ -79,7 +79,7 @@ class PreProcessor(ProcessingBase):
             PreProcessor,
             modname,
             self.exclusives,
-            self.ignored_mods,
+            self.skip_classes,
             self.import_manager,
             self.scope_manager,
             self.def_manager,
@@ -92,7 +92,7 @@ class PreProcessor(ProcessingBase):
         def iterate_mod_items(items, const):
             items = [
                 item for item in items 
-                if not self.ignored_mod_pattern.search(item)
+                if not self.skip_classes_pattern.search(item)
             ]
             
             for item in items:
@@ -222,8 +222,8 @@ class PreProcessor(ProcessingBase):
             if self.exclusives and src_name.split(".")[0] not in self.exclusives:
                 continue
 
-            # Skip ignored modules
-            if tgt_name in self.ignored_mods:
+            # Skip specified classes
+            if tgt_name in self.skip_classes:
                 continue
 
             imported_name = self.import_manager.handle_import(src_name, level)
@@ -428,7 +428,7 @@ class PreProcessor(ProcessingBase):
 
     def visit_ClassDef(self, node):
         # create a definition for the class (node.name)
-        if node.name in self.ignored_mods:
+        if node.name in self.skip_classes:
             return
 
         cls_def = self.def_manager.handle_class_def(self.current_ns, node.name)

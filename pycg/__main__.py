@@ -62,7 +62,7 @@ def main():
 
     cg = CallGraphGenerator(
         args.entry_point, args.package,
-        args.exclusives, args.ignored_mods,
+        args.exclusives, args.skip_classes,
         args.max_iter, args.operation
     )
     cg.analyze()

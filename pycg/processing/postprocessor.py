@@ -31,7 +31,7 @@ class PostProcessor(ProcessingBase):
         input_file,
         modname,
         exclusives,
-        ignored_mods,
+        skip_classes,
         import_manager,
         scope_manager,
         def_manager,
@@ -41,7 +41,7 @@ class PostProcessor(ProcessingBase):
     ):
         super().__init__(input_file, modname, modules_analyzed)
         self.exclusives = exclusives
-        self.ignored_mods = ignored_mods
+        self.skip_classes = skip_classes
         self.import_manager = import_manager
         self.scope_manager = scope_manager
         self.def_manager = def_manager
@@ -178,8 +178,10 @@ class PostProcessor(ProcessingBase):
         super().visit_FunctionDef(node)
 
     def visit_ClassDef(self, node):
-        if node.name in self.ignored_mods:
+        # Return if visiting class should be skipped
+        if node.name in self.skip_classes:
             return
+
         # create a definition for the class (node.name)
         cls_def = self.def_manager.handle_class_def(self.current_ns, node.name)
 
@@ -187,6 +189,7 @@ class PostProcessor(ProcessingBase):
         cls = self.class_manager.get(cls_def.get_ns())
         if not cls:
             cls = self.class_manager.create(cls_def.get_ns(), self.modname)
+
         cls.clear_mro()
         for base in node.bases:
             # all bases are of the type ast.Name
@@ -335,7 +338,7 @@ class PostProcessor(ProcessingBase):
         super().analyze_submodules(
             PostProcessor,
             self.exclusives,
-            self.ignored_mods,
+            self.skip_classes,
             self.import_manager,
             self.scope_manager,
             self.def_manager,
